@@ -1,6 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack'
 import React from 'react'
-import Account from '../screens/Account'
+import Search from '../screens/Search'
 
 const Stack = createStackNavigator()
 
@@ -8,8 +8,8 @@ export default function SearchStack() {
     return (
         <Stack.Navigator>
             <Stack.Screen
-            name='account'
-            component={Account}
+            name='search'
+            component={Search}
             options={{title: 'Buscar'}}
             />
         </Stack.Navigator>        

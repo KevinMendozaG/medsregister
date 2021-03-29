@@ -39,8 +39,9 @@ export default function Navigation() {
             <Icon
             type="fontisto"
             name = {iconName} 
-            size = {22} 
+            size = {15} 
             color = {color}
+            marginTop ={10}
             />                            
         )        
     }

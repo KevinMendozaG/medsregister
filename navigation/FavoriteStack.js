@@ -1,6 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack'
 import React from 'react'
-import Account from '../screens/Account'
+import Favorite from '../screens/Favorite'
 
 const Stack = createStackNavigator()
 
@@ -8,8 +8,8 @@ export default function FavoriteStack() {
     return (
         <Stack.Navigator>
             <Stack.Screen
-            name='account'
-            component={Account}
+            name='favorite'
+            component={Favorite}
             options={{title: 'Favorito'}}
             />
         </Stack.Navigator>        

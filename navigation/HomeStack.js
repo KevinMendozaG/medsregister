@@ -1,6 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack'
 import React from 'react'
-import Account from '../screens/Account'
+import Home from '../screens/Home'
 
 const Stack = createStackNavigator()
 
@@ -8,8 +8,8 @@ export default function HomeStack() {
     return (
         <Stack.Navigator>
             <Stack.Screen
-            name='account'
-            component={Account}
+            name='home'
+            component={Home}
             options={{title: 'Inicio'}}
             />
         </Stack.Navigator>        
