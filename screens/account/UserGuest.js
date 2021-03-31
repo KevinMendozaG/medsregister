@@ -10,7 +10,7 @@ export default function UserGuest() {
             centerContent
             style={styles.viewBody}
         >
-            <Text style={styles.title}>Cuenta MedsRegisgister</Text>
+            <Text style={styles.title}>Cuenta MedsRegister</Text>
             <Text style={styles.description}>
                 ¿Cansado de que se te pase la hora para tomar tus medicamentos? Únete y empieza a organizar tus horarios
             </Text>
