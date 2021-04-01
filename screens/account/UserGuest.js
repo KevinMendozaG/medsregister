@@ -35,7 +35,8 @@ export default function UserGuest() {
 
 const styles = StyleSheet.create({
     viewBody: {
-        marginHorizontal:30
+        marginHorizontal:10,
+        backgroundColor: "#FFFFFF"
     },
     title: {
         textAlign: "center",
@@ -47,7 +48,8 @@ const styles = StyleSheet.create({
     description: {
         textAlign: "justify",
         marginBottom: 20,
-        color: "#053243"
+        color: "#053243",
+        justifyContent: "center"
     },
     image: {
         height: 250,

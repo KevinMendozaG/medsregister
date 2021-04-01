@@ -7,7 +7,9 @@ import RegisterForm from '../../components/account/RegisterForm'
 
 export default function Register() {
     return (
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollView
+            style={styles.viewBody}
+        >
             <Image
                 source={require("../../assets/medsregister.png")}
                 resizeMode="contain"
@@ -27,6 +29,9 @@ const styles = StyleSheet.create({
         width: "100%",
         marginTop: 20,
         marginBottom: 10
+    },
+    viewBody: {
+        backgroundColor: "#FFFFFF"
     },
     divider: {
         backgroundColor:"#442484",
