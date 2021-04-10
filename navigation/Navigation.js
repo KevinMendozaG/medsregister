@@ -1,9 +1,9 @@
 import React from 'react'
-import { NavigationContainer } from '@react-navigation/native';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { NavigationContainer } from '@react-navigation/native'
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { Icon } from 'react-native-elements'
 
-import AccountSatck from './AccountStack';
+import AccountStack from './AccountStack';
 import FavoriteStack from './FavoriteStack';
 import DaytodayStack from './DaytodayStack';
 import SearchStack from './SearchStack';
@@ -52,12 +52,12 @@ export default function Navigation() {
                 initialRouteName = "home"
                 tabBarOptions = {
                     {
-                        inactiveTintColor : "#dd8c8d",
-                        activeTintColor : "#cd0a0b",
+                        inactiveTintColor : "#07a5cf",
+                        activeTintColor : "#042b41",
                         showIcon: true,
                         showLabel: false,
                         tabStyle: {marginTop: 15},
-                        style: { backgroundColor: '#18a59f' }
+                        //style: { backgroundColor: '#c70606' }
                     }
                 }
                 screenOptions = {( {route} ) => ({
@@ -86,7 +86,7 @@ export default function Navigation() {
                 />                                
                 <Tab.Screen 
                     name = 'account'
-                    component = {AccountSatck}
+                    component = {AccountStack}
                     options={{title: 'Cuenta'}}
                 />
             </Tab.Navigator>

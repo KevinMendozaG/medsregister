@@ -29,9 +29,9 @@ export default function UserLogged() {
                 user && (
                     <View>
                         <InfoUser 
-                        user= {user} 
-                        setLoading={setLoading} 
-                        setLoadingText={setLoadingText}
+                            user= {user} 
+                            setLoading={setLoading} 
+                            setLoadingText={setLoadingText}
                         />
                         <AccountOptions
                             user= {user} 
