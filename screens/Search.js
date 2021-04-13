@@ -1,5 +1,5 @@
 import React,{ useEffect, useState, useCallback, useRef } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View } from 'react-native'
 import MapView, { Callout, Marker } from 'react-native-maps'
 import { Button, Input } from 'react-native-elements'
 import { useFocusEffect } from '@react-navigation/native'
@@ -49,24 +49,24 @@ export default function Search() {
         const url= urlParameters(newRegion.latitude, newRegion.longitude, 1000, 'pharmacy', 'AIzaSyDbScSU4X5B5tgzQiyNFA3ROIr0k6aiYRI')
         fetch(url).then((data) => data.json()).then((res) =>{
             setPharmacies(res.results)
-            console.log(isEmpty(pharmacy))
+            console.log(pharmacies)
         })
     }
 
-    const searchName = (name) => {
+    const searchName = async(name) => {
         setErrorSearch("")
         setPharmacy([])
+        setPharmacies([])
         if(isEmpty(name)){
             setErrorSearch("Debes ingresar el nombre de la farmacía")
             return
         }
-        const url= urlParameters(newRegion.latitude, newRegion.longitude, 1000, 'pharmacy', 'AIzaSyDbScSU4X5B5tgzQiyNFA3ROIr0k6aiYRI')
-        fetch(url).then((data) => data.json()).then((res) =>{
+        const url= urlParameters(newRegion.latitude, newRegion.longitude, 2000, 'pharmacy', 'AIzaSyDbScSU4X5B5tgzQiyNFA3ROIr0k6aiYRI')
+        await fetch(url).then((data) => data.json()).then((res) =>{
             map(res.results, (item) =>{
                 if (name===item.name) {
                     setPharmacy(item)
                     console.log("yeaaaaa")
-                    setPharmacy(item)
                     console.log(pharmacy)
                 }
             })
@@ -133,6 +133,16 @@ export default function Search() {
                         </Marker>    
                 ))
                 }
+                <Marker
+                    coordinate={{
+                        latitude: newRegion.latitude,
+                        longitude: newRegion.longitude
+                    }}
+                >
+                    <View>
+                        <Image style={{width: 40, height: 40}} source={require("../assets/marker.png")}/>
+                    </View>
+                </Marker>
             </MapView>: null}
             <Input
                 containerStyle={styles.input}
