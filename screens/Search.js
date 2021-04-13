@@ -18,6 +18,8 @@ export default function Search() {
     const [longitudeIni, setLongitudeIni] = useState(null)
     const [searchParameter, setSearchParameter] = useState("")
     const [errorSearch, setErrorSearch] = useState("")
+    const [pharmacy, setPharmacy] = useState([])
+    const [isSeaarch, setIsSeaarch] = useState(false)
 
     
 
@@ -42,21 +44,38 @@ export default function Search() {
         })()
     }, [])
     
-    const places = ( type ) =>{
+    const places = () =>{
+        setPharmacy([])
+        const url= urlParameters(newRegion.latitude, newRegion.longitude, 1000, 'pharmacy', 'AIzaSyDbScSU4X5B5tgzQiyNFA3ROIr0k6aiYRI')
+        fetch(url).then((data) => data.json()).then((res) =>{
+            setPharmacies(res.results)
+            console.log(isEmpty(pharmacy))
+        })
+    }
+
+    const searchName = (name) => {
         setErrorSearch("")
-        if(isEmpty(type)){
+        setPharmacy([])
+        if(isEmpty(name)){
             setErrorSearch("Debes ingresar el nombre de la farmacía")
             return
         }
-        const url= urlParameters(newRegion.latitude, newRegion.longitude, 1000, type, 'AIzaSyDbScSU4X5B5tgzQiyNFA3ROIr0k6aiYRI')
+        const url= urlParameters(newRegion.latitude, newRegion.longitude, 1000, 'pharmacy', 'AIzaSyDbScSU4X5B5tgzQiyNFA3ROIr0k6aiYRI')
         fetch(url).then((data) => data.json()).then((res) =>{
-            if ( size(res.results)>1 && type != 'pharmacy') {
+            map(res.results, (item) =>{
+                if (name===item.name) {
+                    setPharmacy(item)
+                    console.log("yeaaaaa")
+                    setPharmacy(item)
+                    console.log(pharmacy)
+                }
+            })
+
+            if ( isEmpty(pharmacy) ) {
                 toastRef.current.show("Ha ocurrido un error en la busqueda, intenta mas tarde.", 3000)
                 return
             }
-            setPharmacies(res.results)
         })
-        
     }
 
     const urlParameters = (latitude, longitude, radius, type, API) =>{
@@ -80,7 +99,23 @@ export default function Search() {
                initialRegion={newRegion}
                 showsUserLocation={true}
             >
-                {pharmacies.map((element, i) => (
+                { 
+                !isEmpty(pharmacy) ? 
+                    <Marker
+                    coordinate= {{
+                        latitude: pharmacy.geometry.location.lat,
+                        longitude: pharmacy.geometry.location.lng,
+                        title: pharmacy.name
+                    }}
+                >
+                <Callout>
+                    <View>
+                        <Text>{pharmacy.name}</Text>
+
+                    </View>
+                </Callout>
+                </Marker> :
+                pharmacies.map((element, i) => (
                         <Marker
                             key={i}
                             coordinate= {{
@@ -96,7 +131,8 @@ export default function Search() {
                             </View>
                         </Callout>
                         </Marker>    
-                ))}
+                ))
+                }
             </MapView>: null}
             <Input
                 containerStyle={styles.input}
@@ -108,13 +144,13 @@ export default function Search() {
                 containerStyle={styles.btnContainer}
                 buttonStyle={styles.btn}
                 title="Buscar"
-                onPress={() => places(searchParameter)}
+                onPress={() => searchName(searchParameter)}
             />
             <Button
             containerStyle={styles.btnContainer}
             buttonStyle={styles.btn}
             title="Mostrar farmacias cercanas"
-                onPress={() => places('pharmacy')}
+                onPress={() => places()}
             />
             <Toast ref={toastRef} position="center" opacity={0.9}/>
         </View>
