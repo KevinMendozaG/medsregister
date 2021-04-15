@@ -1,5 +1,5 @@
 import { firebaseApp } from './firebase'
-import * as firebase from 'firebase'
+import firebase from 'firebase'
 import 'firebase/firestore'
 
 import { fileToBlob } from './helpers'
@@ -105,4 +105,32 @@ export const updatePassword = async(password) => {
         result.error = error
     }
     return result     
+}
+
+export const addDocumentWithoutId = async(collection, data) =>{
+    const result = {statusResponse : true, error: null}
+    try {        
+        await db.collection(collection).add(data)
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result
+}
+
+export const getMedicines = async() =>{
+    const user = firebase.auth().currentUser
+    const result = {statusResponse : true, error: null, medicines: []}
+    try {        
+        const response = await db.collection('medicine').where('createdBy', '==', user.uid).get()
+        response.forEach((doc)=>{
+            const medicine = doc.data()
+            medicine.id = doc.id
+            result.medicines.push(medicine)
+        })
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result
 }
