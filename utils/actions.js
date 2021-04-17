@@ -23,6 +23,14 @@ export const isUserLogged = () =>{
     return isLogged
 }
 
+export const isUserLogged1 = () =>{
+    let isLogged = false
+    const user = firebase.auth().currentUser
+    user ? isLogged = true : isLogged = false
+    
+    return isLogged
+}
+
 export const registerUser = async(email, password) =>{
     const result = { statusResponse: true, error: null}
     try {

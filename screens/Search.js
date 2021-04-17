@@ -1,5 +1,5 @@
 import React,{ useEffect, useState, useCallback, useRef } from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View, Alert } from 'react-native'
 import MapView, { Callout, Marker } from 'react-native-maps'
 import { Button, Input } from 'react-native-elements'
 import { isEmpty, map, size } from 'lodash'
@@ -8,7 +8,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import uuid from 'random-uuid-v4'
 
 import { getCurrentLocation } from '../utils/helpers'
-import { addDocumentWithoutId, checkIfFavorite, getCurrentUser, getFavorites } from '../utils/actions'
+import { addDocumentWithoutId, checkIfFavorite, getCurrentUser, isUserLogged1 } from '../utils/actions'
 import Loading from '../components/Loading'
 
 
@@ -23,8 +23,7 @@ export default function Search() {
     const [errorSearch, setErrorSearch] = useState("")
     const [pharmacy, setPharmacy] = useState([])
     const [loading, setLoading] = useState(false)
-
-    
+    const [isLogged, setIsLogged] = useState(null)    
 
     useEffect(() => {
         (async() => {
@@ -92,9 +91,13 @@ export default function Search() {
 
     const addFavorite = async( element ) => {
         const { name, vicinity, latitude= element.geometry.location.lat, longitude= element.geometry.location.lng, icon  } = element
+        const logged = isUserLogged1() 
+        if(!logged){
+            toastRef.current.show("Debes estar logueado para agregar farmacias a favoritos.", 3000)
+            return
+        }
         setLoading(true)
         const user = getCurrentUser()
-
         const favorite = {
             idFavorite: uuid(),
             userName: user.displayName,
@@ -150,12 +153,12 @@ export default function Search() {
                     }}
                 >
                 <Callout
-                    onPress={addFavorite}
+                    onPress={() => addFavorite(pharmacy)}
                 >
                     <View>
-                        <Text>{pharmacy.name}</Text>
+                        <Text style={styles.title}>{pharmacy.name}</Text>
                         <Text>Dirección: {pharmacy.vicinity}</Text>
-                        <Text>Toca AQUI agregar a favoritos</Text>
+                        <Text style={styles.addFavorite}>Toca AQUI agregar a favoritos</Text>
                     </View>
                 </Callout>
                 </Marker> :
