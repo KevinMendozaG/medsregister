@@ -5,8 +5,11 @@ import { Button, Input } from 'react-native-elements'
 import { useFocusEffect } from '@react-navigation/native'
 import { isEmpty, map, size } from 'lodash'
 import Toast from 'react-native-easy-toast'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { getCurrentLocation } from '../utils/helpers'
+import { addDocumentWithoutId, getCurrentUser } from '../utils/actions'
+import Loading from '../components/Loading'
 
 
 export default function Search() {
@@ -19,7 +22,7 @@ export default function Search() {
     const [searchParameter, setSearchParameter] = useState("")
     const [errorSearch, setErrorSearch] = useState("")
     const [pharmacy, setPharmacy] = useState([])
-    const [isSeaarch, setIsSeaarch] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     
 
@@ -92,8 +95,43 @@ export default function Search() {
         setSearchParameter(e.nativeEvent.text)
     }
 
+    const addFavorite = async( element ) => {
+        const { name, vicinity, latitude= element.geometry.location.lat, longitude= element.geometry.location.lng, icon  } = element
+        setLoading(true)
+        const user = getCurrentUser()
+        console.log(latitude)
+        const favorite = {
+            userName: user.displayName,
+            idUser: user.uid,
+            pharmacyName: name,
+            address: vicinity,
+            icon,
+            latitude,
+            longitude
+        }
+        const responseAddDocument = await addDocumentWithoutId("favorites", favorite)
+        if(!responseAddDocument.statusResponse) {
+            setLoading(false)
+            toastRef.current.show("Error al agregar favorito, por favor intenta más tarde.", 3000)
+            return
+        }
+        setLoading(false)
+    }
+
     return (
-        <View>
+        <KeyboardAwareScrollView>
+            <Input
+                containerStyle={styles.input}
+                placeholder= "Ingresa el nombre de la farmacía..."
+                onChange= {(e) => onChange(e)}
+                errorMessage={errorSearch}
+            />
+            <Button
+                containerStyle={styles.btnContainer}
+                buttonStyle={styles.btn}
+                title="Buscar"
+                onPress={() => searchName(searchParameter)}
+            />
             {latitudeIni ?<MapView
                style={styles.mapStyle}
                initialRegion={newRegion}
@@ -108,10 +146,13 @@ export default function Search() {
                         title: pharmacy.name
                     }}
                 >
-                <Callout>
+                <Callout
+                    onPress={addFavorite}
+                >
                     <View>
                         <Text>{pharmacy.name}</Text>
-
+                        <Text>Dirección: {pharmacy.vicinity}</Text>
+                        <Text>Toca AQUI agregar a favoritos</Text>
                     </View>
                 </Callout>
                 </Marker> :
@@ -123,11 +164,15 @@ export default function Search() {
                                 longitude: element.geometry.location.lng,
                                 title: element.name
                             }}
+                            
                         >
-                        <Callout>
+                        <Callout
+                            onPress={() => addFavorite(element)}
+                        >
                             <View>
-                                <Text>{element.name}</Text>
-
+                                <Text style={styles.title}>{element.name}</Text>
+                                <Text>Dirección: {element.vicinity}</Text>
+                                <Text style={styles.addFavorite}>Toca AQUI agregar a favoritos</Text>
                             </View>
                         </Callout>
                         </Marker>    
@@ -144,18 +189,8 @@ export default function Search() {
                     </View>
                 </Marker>
             </MapView>: null}
-            <Input
-                containerStyle={styles.input}
-                placeholder= "Ingresa el nombre de la farmacía..."
-                onChange= {(e) => onChange(e)}
-                errorMessage={errorSearch}
-            />
-            <Button
-                containerStyle={styles.btnContainer}
-                buttonStyle={styles.btn}
-                title="Buscar"
-                onPress={() => searchName(searchParameter)}
-            />
+            
+            
             <Button
             containerStyle={styles.btnContainer}
             buttonStyle={styles.btn}
@@ -163,14 +198,17 @@ export default function Search() {
                 onPress={() => places()}
             />
             <Toast ref={toastRef} position="center" opacity={0.9}/>
-        </View>
+            <Loading isVisible={loading} text={"Agregando a favorito"}/>
+        </KeyboardAwareScrollView>
     )
 }
 
 const styles = StyleSheet.create({
     mapStyle: {
         width: "100%",
-        height: 500
+        height: 500,
+        marginBottom:10,
+        marginTop: 10
     },
     viewMapBtn: {
         flexDirection: "row",
@@ -184,15 +222,19 @@ const styles = StyleSheet.create({
         backgroundColor: "#a65273"
     },
     input:{
-        marginTop: 10,
-        width: "100%",
+        width: "95%"
     },
     btnContainer: {
-        marginTop: 5,
         width: "95%",
         alignSelf:"center"
     },
     btn: {
         backgroundColor: "#16a69f"
     },
+    title: {
+        fontWeight: "bold"
+    },
+    addFavorite: {
+        color: "#e4546c"
+    }
 })

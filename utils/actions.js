@@ -106,3 +106,52 @@ export const updatePassword = async(password) => {
     }
     return result     
 }
+
+export const addDocumentWithoutId = async(collection, data) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        await db.collection(collection).add(data)
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+export const getFavorites = async(id) => {
+    const result = { statusResponse: true, error: null, favorites: [] }
+    try {
+        const response = await db
+            .collection("favorites")
+            .where("idUser", "==", id)
+            .get()
+        response.forEach((doc) => {
+            const favorite = doc.data()
+            favorite.id = doc.id
+            result.favorites.push(favorite)
+        })
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+export const removeFavorite = async(idUser, idFavorite) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        const response = await db
+            .collection("favorites")
+            .where("idFavorite","==", idFavorite)
+            .where("idUser", "==", idUser)
+            .get()
+        response.forEach(async(doc) =>{
+            const favoriteId = doc.id
+            await db.collection("favorites").doc(favoriteId).delete()
+        })
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
