@@ -10,6 +10,7 @@ import { getCurrentUser, getFavorites } from '../utils/actions'
 export default function Favorite() {
     const [favorites, setFavorites] = useState([])
     const [loading, setLoading] = useState(false)
+    const [reloadFavorite, setReloadFavorite] = useState(false)
 
     useFocusEffect(
         useCallback(() => {
@@ -21,10 +22,10 @@ export default function Favorite() {
                     setFavorites(response.favorites)
                 }
                 setLoading(false)
-                console.log(favorites)
             }
             getData()
-        }, [])
+            setReloadFavorite(false)
+        }, [reloadFavorite])
     )
 
     return (
@@ -32,7 +33,7 @@ export default function Favorite() {
             {
                 size(favorites) > 0 ? (
                     <ListFavorites
-                        favorites={favorites}
+                        favorites={favorites} setReloadFavorite={setReloadFavorite}
                     />
                 ) : (
                     <View style={styles.notFoundView}>

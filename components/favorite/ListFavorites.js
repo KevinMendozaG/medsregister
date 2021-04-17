@@ -7,7 +7,7 @@ import { removeFavorite } from '../../utils/actions'
 import Loading from '../Loading'
 
 
-export default function ListFavorites({ favorites }) {
+export default function ListFavorites({ favorites, setReloadFavorite }) {
     const toastRef = useRef()
 
     const [loading, setLoading] = useState(false)
@@ -17,8 +17,8 @@ export default function ListFavorites({ favorites }) {
             <FlatList
                 data= {favorites}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={(favorite) => (
-                    <Favorite favorite={favorite} setLoading={setLoading} loading={loading} />
+                renderItem={(favorite, index) => (
+                    <Favorite favorite={favorite} setLoading={setLoading} toastRef={toastRef} setReloadFavorite={setReloadFavorite}  />
                 )}
             />
             <Toast ref={toastRef} position="center" opacity={0.9}/>
@@ -29,10 +29,9 @@ export default function ListFavorites({ favorites }) {
 
 
 
-function Favorite({ favorite, setLoading, loading }) { 
-    const { address, idUser, latitude, longitude, pharmacyName, userName, icon, id } = favorite.item
-    const { idfavorite } = favorite.index
-    console.log(idfavorite)
+function Favorite({ favorite, setLoading, toastRef, setReloadFavorite }) { 
+    const { address, idUser, latitude, longitude, pharmacyName, userName, icon, id, idFavorite } = favorite.item
+
     return (
 
             <View style={styles.viewFavorite}>
@@ -53,21 +52,22 @@ function Favorite({ favorite, setLoading, loading }) {
                         name= "close-a"
                         iconStyle={styles.icon}
                         containerStyle={styles.btn}
-                        onPress={() => deleteFavorite(idUser, id, setLoading, loading)}
+                        onPress={() => deleteFavorite(idUser, idFavorite, setLoading, toastRef, setReloadFavorite)}
                     />
             </View>
 
     )
 }
 
-const deleteFavorite = async({ idUser, idFavorito, setLoading }) => {
-    console.log(idFavorito)
-    // setLoading(true)    
-    // const response = await removeFavorite(idUser, idFavorito)
-    // setLoading(false)
-    // if(!response.statusResponse){
-    //     toastRef.current.show("Error al eliminar favorito, por favor intenta más tarde.", 3000)
-    // }
+const deleteFavorite = async( idUser, idFavorito, setLoading, toastRef, setReloadFavorite ) => {
+    setLoading(true)   
+    const response = await removeFavorite(idUser, idFavorito)
+    setLoading(false)
+    if(!response.statusResponse){
+        toastRef.current.show("Error al eliminar favorito, por favor intenta más tarde.", 3000)
+        return
+    }
+    setReloadFavorite(true)
 }
 
 const styles = StyleSheet.create({
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
         width: "75%"
     },
     icon: {
-        color: "#c1c1c1",
+        color: "#94cfc8",
     },
     btn: {
         position: "absolute",

@@ -2,13 +2,13 @@ import React,{ useEffect, useState, useCallback, useRef } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import MapView, { Callout, Marker } from 'react-native-maps'
 import { Button, Input } from 'react-native-elements'
-import { useFocusEffect } from '@react-navigation/native'
 import { isEmpty, map, size } from 'lodash'
 import Toast from 'react-native-easy-toast'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import uuid from 'random-uuid-v4'
 
 import { getCurrentLocation } from '../utils/helpers'
-import { addDocumentWithoutId, getCurrentUser } from '../utils/actions'
+import { addDocumentWithoutId, checkIfFavorite, getCurrentUser, getFavorites } from '../utils/actions'
 import Loading from '../components/Loading'
 
 
@@ -52,7 +52,6 @@ export default function Search() {
         const url= urlParameters(newRegion.latitude, newRegion.longitude, 1000, 'pharmacy', 'AIzaSyDbScSU4X5B5tgzQiyNFA3ROIr0k6aiYRI')
         fetch(url).then((data) => data.json()).then((res) =>{
             setPharmacies(res.results)
-            console.log(pharmacies)
         })
     }
 
@@ -69,16 +68,13 @@ export default function Search() {
             map(res.results, (item) =>{
                 if (name===item.name) {
                     setPharmacy(item)
-                    console.log("yeaaaaa")
-                    console.log(pharmacy)
                 }
             })
-
-            if ( isEmpty(pharmacy) ) {
-                toastRef.current.show("Ha ocurrido un error en la busqueda, intenta mas tarde.", 3000)
-                return
-            }
         })
+        // if ( isEmpty(pharmacy) ) {
+        //     toastRef.current.show("Ha ocurrido un error en la busqueda, intenta mas tarde.", 3000)
+        //     return
+        // }
     }
 
     const urlParameters = (latitude, longitude, radius, type, API) =>{
@@ -87,7 +83,6 @@ export default function Search() {
         const typeData = `&types=${type}`
         const key = `&key=${API}`
         const path= `${url}${location}${typeData}${key}`
-        console.log(path)
         return path
     }
 
@@ -99,8 +94,9 @@ export default function Search() {
         const { name, vicinity, latitude= element.geometry.location.lat, longitude= element.geometry.location.lng, icon  } = element
         setLoading(true)
         const user = getCurrentUser()
-        console.log(latitude)
+
         const favorite = {
+            idFavorite: uuid(),
             userName: user.displayName,
             idUser: user.uid,
             pharmacyName: name,
@@ -109,6 +105,13 @@ export default function Search() {
             latitude,
             longitude
         }
+        const responseCheckIfFavorite = await checkIfFavorite(favorite.idUser, favorite.pharmacyName)
+        if(responseCheckIfFavorite.isFavorite){
+            toastRef.current.show("La farmacia esta actualmente en favoritos.", 3000)
+            setLoading(false)
+            return
+        }
+
         const responseAddDocument = await addDocumentWithoutId("favorites", favorite)
         if(!responseAddDocument.statusResponse) {
             setLoading(false)

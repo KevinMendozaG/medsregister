@@ -3,6 +3,7 @@ import * as firebase from 'firebase'
 import 'firebase/firestore'
 
 import { fileToBlob } from './helpers'
+import { size } from 'lodash'
 
 const db= firebase.firestore(firebaseApp)
 
@@ -130,6 +131,29 @@ export const getFavorites = async(id) => {
             favorite.id = doc.id
             result.favorites.push(favorite)
         })
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+export const checkIfFavorite = async(id, name) => {
+    const result = { statusResponse: true, error: null, favorites: [], isFavorite: false }
+    try {
+        const response = await db
+            .collection("favorites")
+            .where("idUser", "==", id)
+            .where("pharmacyName", "==", name)
+            .get()
+            response.forEach((doc) => {
+                const favorite = doc.data()
+                favorite.id = doc.id
+                result.favorites.push(favorite)
+            })
+            if (size(result.favorites)>0) {
+                result.isFavorite= true
+            }
     } catch (error) {
         result.statusResponse = false
         result.error = error
