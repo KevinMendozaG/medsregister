@@ -216,17 +216,6 @@ const styles = StyleSheet.create({
         marginBottom:10,
         marginTop: 10
     },
-    viewMapBtn: {
-        flexDirection: "row",
-        justifyContent: "center",
-        marginTop: 10
-    },
-    viewMapBtnContainerCancel: {
-        paddingLeft: 5
-    },
-    viewMapBtnCancel: {
-        backgroundColor: "#a65273"
-    },
     input:{
         width: "95%"
     },
@@ -235,7 +224,14 @@ const styles = StyleSheet.create({
         alignSelf:"center"
     },
     btn: {
-        backgroundColor: "#16a69f"
+        borderRadius: 20,
+        backgroundColor: "#07a5cf",
+        borderTopWidth: 1,
+        borderTopColor: "#d10809",
+        borderBottomWidth: 1,
+        borderBottomColor: "#d10809",
+        paddingVertical: 10,
+        marginHorizontal: 20
     },
     title: {
         fontWeight: "bold"

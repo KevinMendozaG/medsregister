@@ -5,25 +5,25 @@ import { Card, Icon } from 'react-native-elements'
 
 import {deleteDocumentById} from '../../utils/actions'
 
-export default function ListMedicines({ medicines, navigation }) {
+export default function ListMedicines({ medicines, navigation, setReloadFavorite }) {
     return (
         <View>
             <FlatList
                  keyExtractor = {(item, index)=> index.toString()}
                  data = { medicines }
                  renderItem = { (medicine) => (
-                     <Medicine medicine = {medicine} navigation = {navigation} />
+                     <Medicine medicine = {medicine} navigation = {navigation} setReloadFavorite={setReloadFavorite} />
                  ) }
             />
         </View>
     )
 }
 
-function Medicine ({ medicine, navigation }) {
+function Medicine ({ medicine, navigation, setReloadFavorite }) {
     const {name, quantity, manufacturer, id} = medicine.item
     const editMode = true
 
-    const deleteRegister = async (id) => {
+    const deleteRegister = async (id, setReloadFavorite) => {
         Alert.alert(
             'Eliminar imagen',
             '¿Estas seguro que quieres eliminar la imagen?',
@@ -41,12 +41,13 @@ function Medicine ({ medicine, navigation }) {
                             console.log(deleteResponse.error)            
                             return
                         }
-                        navigation.navigate('daytoday')
+                        setReloadFavorite(true)
                     }
                 }
             ],
             {cancelable: false}
         )
+        
     }
     return(
         
@@ -67,7 +68,7 @@ function Medicine ({ medicine, navigation }) {
                                     name= 'delete'                                                                        
                                     size = {50}
                                     containerStyle={styles.icon}
-                                    onPress ={()=>deleteRegister(id)}
+                                    onPress ={()=>deleteRegister(id, setReloadFavorite)}
                                 />
                         </View>                      
                        

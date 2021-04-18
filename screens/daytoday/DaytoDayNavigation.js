@@ -16,12 +16,12 @@ export default function DaytoDayNavigation() {
                 <Tab.Screen
                     name = 'daytoday'
                     component = {Daytoday}
-                    options = {{title: 'Día a día'}}
+                    options = {{title: 'Inventario'}}
                 />
                 <Tab.Screen
                     name = 'inventory'
                     component = {Inventory}
-                    options = {{title: 'Inventario'}}
+                    options = {{title: 'Día a día'}}
                 />
                 
             </Tab.Navigator>
