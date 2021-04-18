@@ -78,8 +78,8 @@ const styles = StyleSheet.create({
         width:"95%",
     },
     btn: {
-        borderRadius: 5,
-        backgroundColor: "#16a69f",
+        borderRadius: 20,
+        backgroundColor: "#f9b30b",
         borderTopWidth: 1,
         borderTopColor: "#d10809",
         borderBottomWidth: 1,

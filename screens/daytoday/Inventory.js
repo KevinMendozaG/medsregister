@@ -1,20 +1,19 @@
+import React, { useEffect, useState, useCallback} from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 import firebase from 'firebase'
-import React, { useEffect, useState, useCallback } from 'react'
-import { StyleSheet, Text, View  } from 'react-native'
 import { Icon } from 'react-native-elements'
 import { useFocusEffect } from '@react-navigation/native'
 
 import { getMedicines } from '../../utils/actions'
 import Loading from '../../components/Loading'
-import ListMedicines from '../../components/daytoday/ListMedicines'
+import ListInvetory from '../../components/daytoday/ListInvetory'
 
-
-export default function Daytoday({ navigation }) {
+export default function Inventory({ navigation }) {
 
     const [user, setUser] = useState(null)
     const [medicine, setMedicine] = useState([])
+    const [inventory, setInventory] = useState([])
     const [loading, setLoading] = useState(false)
-    const editMode = false    
 
     useEffect(() => {
         firebase.auth().onAuthStateChanged((userInfo) => {
@@ -30,29 +29,37 @@ export default function Daytoday({ navigation }) {
                 if (response.statusResponse) {
                     setMedicine(response.medicines)
                 }
-                setLoading(false)
+                const responseInvetory = await getMedicines('inventory')
+                if (responseInvetory.statusResponse) {
+                    setInventory(responseInvetory.medicines)
+                }
+                
+                console.log(inventory)
+                setLoading(false)                
             }
             getData()                
         }, [])        
     )
 
-    return (
-        user ? (           
+    return (user ? (           
         <View style={styles.viewBody}>
-            <ListMedicines medicines = { medicine } navigation = { navigation }/> 
+            <ListInvetory
+                navigation= {navigation}
+                inventory = {inventory}
+            />
             <Icon
                 type= 'feather'
                 name= 'plus'
                 color= '#f9b30b'
                 reverse
                 containerStyle={styles.btnContainer}
-                onPress = {() => navigation.navigate('addMedicine', {editMode} )}
+                onPress = {() => navigation.navigate('addMedicineToInvetory', {medicine})}
             />
-            <Loading isVisible ={loading} text='Cargando medicamentos...'/>
+             <Loading isVisible ={loading} text='Cargando medicamentos...'/> 
         </View>
         ): (
             <Text>Debes de loguearte para agregar medicamentos...</Text>
-        )
+        )       
     )
 }
 
