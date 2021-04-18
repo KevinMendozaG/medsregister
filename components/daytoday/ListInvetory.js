@@ -5,22 +5,22 @@ import { Card, Icon } from 'react-native-elements'
 
 import {deleteDocumentById} from '../../utils/actions'
 
-export default function ListMedicines({ medicines, navigation }) {
+export default function ListInvetory({ inventory, navigation }) {
     return (
         <View>
-            <FlatList
-                 keyExtractor = {(item, index)=> index.toString()}
-                 data = { medicines }
-                 renderItem = { (medicine) => (
-                     <Medicine medicine = {medicine} navigation = {navigation} />
-                 ) }
-            />
-        </View>
+        <FlatList
+             keyExtractor = {(item, index)=> index.toString()}
+             data = { inventory }
+             renderItem = { (inventory) => (
+                 <Inventory inventory = {inventory} navigation = {navigation} />
+             ) }
+        />
+    </View>
     )
 }
 
-function Medicine ({ medicine, navigation }) {
-    const {name, quantity, manufacturer, id} = medicine.item
+function Inventory ({ inventory, navigation }) {
+    const {name, dose, period, id} = inventory.item
     const editMode = true
 
     const deleteRegister = async (id) => {
@@ -35,13 +35,13 @@ function Medicine ({ medicine, navigation }) {
                 {
                     text: 'Sí',
                     onPress: async () => {
-                        const deleteResponse = await deleteDocumentById('medicine', id)
+                        const deleteResponse = await deleteDocumentById('inventory', id)
                         if (!deleteResponse.statusResponse) {
                             // toastRef.current.show('Error al grabar el medicamento, por favor intente más tarde')
                             console.log(deleteResponse.error)            
                             return
                         }
-                        navigation.navigate('daytoday')
+                        navigation.navigate('inventory')
                     }
                 }
             ],
@@ -50,18 +50,18 @@ function Medicine ({ medicine, navigation }) {
     }
     return(
         
-         <TouchableOpacity onPress = {() => navigation.navigate('addMedicine', {id, editMode})}>             
+         <TouchableOpacity onPress = {() => navigation.navigate('addMedicineToInvetory', {id, editMode})}>             
                 <Card containerStyle =  {styles.cardStyle}>
                     <Card.Title style={styles.cardTitle}>{name}</Card.Title>
                         <Card.Divider/> 
                         <View style = {{flexDirection: 'row'}}>
                             <View style={{marginRight: 20}}>
-                                <Text style={{alignSelf:'center'}}>Cantidad</Text>
-                                <Text style={{fontSize:24, fontWeight: 'bold', alignSelf:'center'}}> {quantity}</Text>
+                                <Text style={{alignSelf:'center'}}>Frecuencia de toma</Text>
+                                <Text style={{fontSize:24, fontWeight: 'bold', alignSelf:'center'}}> {period}</Text>
                                
                           </View>
                         <View style = {{flexDirection: 'row'}}>
-                                <Text>Fabricante: {manufacturer}</Text>
+                                <Text>Dosis: {dose}</Text>
                                 <Icon
                                     type= 'feather'
                                     name= 'delete'                                                                        
@@ -79,20 +79,4 @@ function Medicine ({ medicine, navigation }) {
 }
 
 
-
-const styles = StyleSheet.create({
-
-    cardStyle: {
-        borderRadius: 10,
-        borderColor: '#f9b30b',
-        marginBottom: 40        
-    },
-
-    cardTitle: {
-        fontSize: 16,
-        fontWeight: 'bold'
-    },
-    icon: {
-        marginLeft: 50
-    }
-})
+const styles = StyleSheet.create({})

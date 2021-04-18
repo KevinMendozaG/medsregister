@@ -1,12 +1,11 @@
 import { isEmpty } from 'lodash'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {  StyleSheet, Text, View } from 'react-native'
 import { Button, Input } from 'react-native-elements'
-import { Switch } from 'react-native-gesture-handler'
 
-import { addDocumentWithoutId, getCurrentUser } from '../../utils/actions'
+import { addDocumentWithoutId, getCurrentUser, getDocumentById, updateDocumentById } from '../../utils/actions'
 
-export default function AddMedicineForm({toastRef, setLoading, navigation}) {
+export default function AddMedicineForm({toastRef, setLoading, navigation, editMode, id}) {
 
     const [formData, setFormData] = useState(defaultFormValues())
     const [state, setState] = useState(false)
@@ -16,9 +15,23 @@ export default function AddMedicineForm({toastRef, setLoading, navigation}) {
     const [errorPeriod, setErrorPeriod] = useState(null)
     const [errorManufacturer, setErrorManufacturer] = useState(null)
     const [errorDose, setErrorDose] = useState(null)
+    const [newFormData, setNewFormData] = useState({})
     
+    useEffect(() => {
+        if (editMode) {
+            getDocument(id)  
+        }
+    }, [])
 
-    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+   async function getDocument (id){
+        const response = await getDocumentById('medicine', id)
+        setLoading(true)
+        if (response.statusResponse) {
+            setNewFormData({...response.document, id: response.document.id})
+            
+        }
+        setLoading(false)         
+   }    
 
     const onChange = (e, type) =>{
         setFormData({ ...formData, [type] : e.nativeEvent.text })
@@ -33,9 +46,7 @@ export default function AddMedicineForm({toastRef, setLoading, navigation}) {
         const medicine = {
             name: formData.name,
             quantity: formData.quantity,
-            alarm: isEnabled,
             manufacturer: formData.manufacturer,
-            period: formData.period,
             createdBy: getCurrentUser().uid
         }
         const responseAddDocument = await addDocumentWithoutId('medicine', medicine)
@@ -48,27 +59,37 @@ export default function AddMedicineForm({toastRef, setLoading, navigation}) {
         navigation.navigate('daytoday')
     }
 
+    const editMedicine = async () => {
+        if (!validForm()) {
+            return
+        }
+        clearErrors()
+                          
+        const updateMedicine = {
+            name: formData.name,
+            quantity: formData.quantity,
+            manufacturer: formData.manufacturer
+        }
+        const responseUpdateDocument = await updateDocumentById('medicine', newFormData.id, updateMedicine )
+        if (!responseUpdateDocument.statusResponse) {
+            toastRef.current.show('Error al actualizar el medicamento, por favor intente más tarde')
+            console.log(responseAddDocument.error)            
+            return
+        }
+        navigation.navigate('daytoday')                                                        
+    }
+
     const validForm = () =>{
         let isValid = true
         clearErrors()
         if (isEmpty(formData.name)) {
-            setErrorName('Debes ingresar el nombre del medicamento')
+            setErrorName(editMode?'Los datos son iguales':'Debes ingresar el nombre del medicamento')
             isValid = false
         }
         if (isEmpty(formData.quantity)) {
-            setErrorQuantity('Debes ingresar la cantidad')
+            setErrorQuantity(editMode? 'Los datos son iguales':'Debes ingresar la cantidad')
             isValid = false
-        }
-        if (isEmpty(formData.period)) {
-            setErrorPeriod('Debes ingresar cada cuanto te debes tomar el medicamento')
-            isValid = false
-        }
-        if (isEmpty(formData.dose)) {
-            setErrorPeriod('Debes ingresar la dosis')
-            isValid = false
-            
-        }
-
+        }       
         return isValid
     }
 
@@ -81,45 +102,26 @@ export default function AddMedicineForm({toastRef, setLoading, navigation}) {
         <View style ={styles.viewForm}>
             <Input
                 placeholder= 'Nombre del medicamento'
-                onChange = {(e) => onChange(e, 'name')}
+                onChange = {    (e) => onChange(e, 'name')}
                 errorMessage = { errorName }
+                defaultValue= {newFormData.name}
             />
             <Input
                 placeholder= 'Cantidad de medicamentos'
                 keyboardType = 'number-pad'
                 onChange = {(e) => onChange(e, 'quantity')}
                 errorMessage = { errorQuantity }
+                defaultValue= {newFormData.quantity}
             />               
             <Input
                 placeholder= 'Fabricante'   
                 onChange = {(e) => onChange(e, 'manufacturer')}
                 errorMessage = { errorManufacturer }
-            />
-            <Input
-                placeholder= 'Frecuencia en minutos de la toma del medicamento.'
-                onChange = {(e) => onChange(e, 'period')}
-                errorMessage = { errorPeriod }
-            />
-            <Input
-                placeholder= 'Dosis'
-                onChange = {(e) => onChange(e, 'dose')}
-                errorMessage = { errorDose }
-                keyboardType = 'number-pad'
-            />
-            <View style = {styles.alarmView}>
-            <Text style = {styles.text}>¿Activar alarma en las noches?</Text>
-            <Switch
-                trackColor={{ true: "#f9b30b", false: "#042b41" }}
-                thumbColor={"#f9b30b" }
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={toggleSwitch}
-                value={isEnabled}
-            />
-           </View>
-            
+                defaultValue= {newFormData.manufacturer}
+            />                       
             <Button
-                title='Agregar medicamento'
-                onPress= {addMedicine}
+                title={editMode ? 'Actualizar datos' :'Agregar medicamento'}
+                onPress= {editMode ? editMedicine : addMedicine}
                 buttonStyle = {styles.btnAdd}  
             />
         </View>
@@ -149,12 +151,9 @@ const styles = StyleSheet.create({
 
 const defaultFormValues = () => {
     return {
-        name: '',        
-        period: 0,
+        name: '',                
         quantity: 0,
-        manufacturer: '',
-        alarm: 0,
-        dose: ''
+        manufacturer: ''                   
     }
 
 }

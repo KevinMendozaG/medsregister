@@ -56,14 +56,15 @@ export default function Navigation() {
                         activeTintColor : "#042b41",
                         showIcon: true,
                         showLabel: false,
-                        tabStyle: {marginTop: 15},
+                        tabStyle: {marginTop: 15}                        
                         //style: { backgroundColor: '#c70606' }
                     }
                 }
                 screenOptions = {( {route} ) => ({
                      tabBarIcon : ({ color }) => screenOptions(route, color)
                     })}
-            >
+                    
+            >                
                 <Tab.Screen 
                     name= 'home'
                     component = {HomeStack}
@@ -88,7 +89,7 @@ export default function Navigation() {
                     name = 'account'
                     component = {AccountStack}
                     options={{title: 'Cuenta'}}
-                />
+                />                
             </Tab.Navigator>
         </NavigationContainer>
     )

@@ -1,7 +1,9 @@
 import { createStackNavigator } from '@react-navigation/stack'
 import React from 'react'
 import AddMedicine from '../screens/daytoday/AddMedicine'
+import AddMedicineToInvetory from '../screens/daytoday/AddMedicineToInvetory'
 import Daytoday from '../screens/daytoday/Daytoday'
+import DaytoDayNavigation from '../screens/daytoday/DaytoDayNavigation'
 
 const Stack = createStackNavigator()
 
@@ -10,13 +12,16 @@ export default function DaytodayStack() {
         <Stack.Navigator>
             <Stack.Screen
             name='daytoday'
-            component={Daytoday}
+            component={DaytoDayNavigation}
             options={{title: 'Día a día'}}
             />
             <Stack.Screen
                 name='addMedicine'
                 component={AddMedicine}
-                options = {{title: 'Agregar medicamento'}}
+            />
+            <Stack.Screen
+                name='addMedicineToInvetory'
+                component={AddMedicineToInvetory}
             />
         </Stack.Navigator>        
 

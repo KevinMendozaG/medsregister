@@ -118,16 +118,51 @@ export const addDocumentWithoutId = async(collection, data) =>{
     return result
 }
 
-export const getMedicines = async() =>{
+export const getMedicines = async(collection) =>{
     const user = firebase.auth().currentUser
     const result = {statusResponse : true, error: null, medicines: []}
     try {        
-        const response = await db.collection('medicine').where('createdBy', '==', user.uid).get()
+        const response = await db.collection(collection).where('createdBy', '==', user.uid).get()
         response.forEach((doc)=>{
             const medicine = doc.data()
             medicine.id = doc.id
             result.medicines.push(medicine)
         })
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result
+}
+
+export const getDocumentById = async(collection, id) =>{
+    const result = {statusResponse : true, error: null, document: null}
+    try {        
+        const response = await db.collection(collection).doc(id).get()
+        result.document = response.data()
+        result.document.id = response.id
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result
+}
+
+export const updateDocumentById = async(collection, id, data) =>{
+    const result = {statusResponse : true, error: null}
+    try {        
+        await db.collection(collection).doc(id).update(data)        
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result
+}
+
+export const deleteDocumentById = async(collection, id) =>{
+    const result = {statusResponse : true, error: null}
+    try {        
+        await db.collection(collection).doc(id).delete()        
     } catch (error) {
         result.statusResponse = false
         result.error = error
