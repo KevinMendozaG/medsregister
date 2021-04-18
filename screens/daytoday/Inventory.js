@@ -14,6 +14,7 @@ export default function Inventory({ navigation }) {
     const [medicine, setMedicine] = useState([])
     const [inventory, setInventory] = useState([])
     const [loading, setLoading] = useState(false)
+    const [reloadFavorite, setReloadFavorite] = useState(false)
 
     useEffect(() => {
         firebase.auth().onAuthStateChanged((userInfo) => {
@@ -37,8 +38,9 @@ export default function Inventory({ navigation }) {
                 console.log(inventory)
                 setLoading(false)                
             }
-            getData()                
-        }, [])        
+            getData() 
+            setReloadFavorite(false)               
+        }, [reloadFavorite])        
     )
 
     return (user ? (           
@@ -46,6 +48,7 @@ export default function Inventory({ navigation }) {
             <ListInvetory
                 navigation= {navigation}
                 inventory = {inventory}
+                setReloadFavorite = {setReloadFavorite}
             />
             <Icon
                 type= 'feather'

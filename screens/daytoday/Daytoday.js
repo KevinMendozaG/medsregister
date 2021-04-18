@@ -14,6 +14,7 @@ export default function Daytoday({ navigation }) {
     const [user, setUser] = useState(null)
     const [medicine, setMedicine] = useState([])
     const [loading, setLoading] = useState(false)
+    const [reloadFavorite, setReloadFavorite] = useState(false)
     const editMode = false    
 
     useEffect(() => {
@@ -32,14 +33,15 @@ export default function Daytoday({ navigation }) {
                 }
                 setLoading(false)
             }
-            getData()                
-        }, [])        
+            getData()  
+            setReloadFavorite(false)              
+        }, [reloadFavorite])        
     )
 
     return (
         user ? (           
         <View style={styles.viewBody}>
-            <ListMedicines medicines = { medicine } navigation = { navigation }/> 
+            <ListMedicines medicines = { medicine } navigation = { navigation } setReloadFavorite={setReloadFavorite}/> 
             <Icon
                 type= 'feather'
                 name= 'plus'

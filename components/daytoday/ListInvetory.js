@@ -5,25 +5,25 @@ import { Card, Icon } from 'react-native-elements'
 
 import {deleteDocumentById} from '../../utils/actions'
 
-export default function ListInvetory({ inventory, navigation }) {
+export default function ListInvetory({ inventory, navigation, setReloadFavorite }) {
     return (
         <View>
         <FlatList
              keyExtractor = {(item, index)=> index.toString()}
              data = { inventory }
              renderItem = { (inventory) => (
-                 <Inventory inventory = {inventory} navigation = {navigation} />
+                 <Inventory inventory = {inventory} navigation = {navigation} setReloadFavorite= {setReloadFavorite} />
              ) }
         />
     </View>
     )
 }
 
-function Inventory ({ inventory, navigation }) {
+function Inventory ({ inventory, navigation, setReloadFavorite }) {
     const {name, dose, period, id} = inventory.item
     const editMode = true
 
-    const deleteRegister = async (id) => {
+    const deleteRegister = async (id, setReloadFavorite) => {
         Alert.alert(
             'Eliminar imagen',
             '¿Estas seguro que quieres eliminar la imagen?',
@@ -41,7 +41,7 @@ function Inventory ({ inventory, navigation }) {
                             console.log(deleteResponse.error)            
                             return
                         }
-                        navigation.navigate('inventory')
+                        setReloadFavorite(true)
                     }
                 }
             ],
@@ -67,7 +67,7 @@ function Inventory ({ inventory, navigation }) {
                                     name= 'delete'                                                                        
                                     size = {50}
                                     containerStyle={styles.icon}
-                                    onPress ={()=>deleteRegister(id)}
+                                    onPress ={()=>deleteRegister(id, setReloadFavorite)}
                                 />
                         </View>                      
                        
