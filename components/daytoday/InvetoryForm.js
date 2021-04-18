@@ -35,8 +35,8 @@ export default function InvetoryForm({medicine, navigation, toastRef, setLoading
         setLoading(true)
         if (response.statusResponse) {
             setNewFormData({...response.document, id: response.document.id})   
-            setFormData({...formData, name: newFormData.name})         
         }
+        setFormData({...formData, name: newFormData.name})     
         setLoading(false)         
    } 
      
@@ -83,11 +83,10 @@ export default function InvetoryForm({medicine, navigation, toastRef, setLoading
 
     const editInventory = async () => {
         const updateMedicine = {
-            name: formData.name,
-            quantity: formData.quantity,
-            manufacturer: formData.manufacturer
+            name: newFormData.name,
+            period: formData.period,
+            dose: formData.dose
         }
-        console.log('Editar')
         const responseUpdateDocument = await updateDocumentById('inventory', newFormData.id, updateMedicine )
         if (!responseUpdateDocument.statusResponse) {
             // toastRef.current.show('Error al actualizar el inventario, por favor intente más tarde')
