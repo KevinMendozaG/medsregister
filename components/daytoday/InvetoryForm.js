@@ -24,6 +24,8 @@ export default function InvetoryForm({medicine, navigation, toastRef, setLoading
     const [errorPeriod, setErrorPeriod] = useState(null)
     const [newFormData, setNewFormData] = useState({})
 
+    const [checked, setChecked] = useState(false)
+
     useEffect(() => {
         if (editMode) {
             getDocument(id)              
@@ -144,6 +146,11 @@ export default function InvetoryForm({medicine, navigation, toastRef, setLoading
                 </TouchableOpacity>
             ))
         }    */}
+        <CheckBox
+            title = 'Lunes'
+            checked ={checked}
+            onPress = {() => {setChecked(!checked)}}
+        />
 
         <Input
             placeholder= 'Frecuencia en minutos de la toma del medicamento.'
